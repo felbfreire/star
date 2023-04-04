@@ -1,13 +1,18 @@
-from asyncio import run
 from databases import Database
 
 
-database = Database('sqlite+aiosqlite:///star.db')
-query = 'create table stars(id integer primary key, star_name char(30) not null)'
+DB = '../star.db'
+SCRIPT = '../script.sql'
 
-async def main():
-        await database.connect()
-        await database.execute(query)
+async def connect_database():
+    database = Database('sqlite+aiosqlite:///{}'.format(DB))
+    await database.connect()
+    return database
 
-if __name__ == '__main__':
-    run(main())
+async def init_db():
+    database = await connect_database()
+    with open(SCRIPT, 'r') as file:
+        for line in file:
+            if line:
+                await database.execute(line)
+
