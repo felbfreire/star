@@ -1,18 +1,21 @@
-from starlette.config import Config
+from contextlib import asynccontextmanager
 
 from databases import Database
 
+from config import DATABASE_URL, SCRIPT
 
-config = Config('.env')
-DB_FILE = '../star.db'
-SCRIPT = '../script.sql'
-DATABASE = 'sqlite+aiosqlite:///{}'
-DATABASE_URL = config('DATABASE_URL')
 
 async def connect_database():
     database = Database(DATABASE_URL)
     await database.connect()
     return database
+
+@asynccontextmanager
+async def lifespan(app):
+    database = await connect_database()
+    await database.connect()
+    yield
+    await database.disconnect()
 
 async def init_db():
     async with Database(DATABASE_URL) as database:
