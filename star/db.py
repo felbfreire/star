@@ -25,3 +25,13 @@ async def init_db():
                     await database.execute(line)
             await database.disconnect()
 
+async def list_stars():
+    query = ('select * from stars;')
+    database = await connect_database()
+    results = await database.fetch_all(query)
+
+    content = [
+            {"star name: ": result} for result in results
+        ]
+    return content
+
