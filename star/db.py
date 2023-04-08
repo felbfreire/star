@@ -31,7 +31,10 @@ async def list_stars():
     results = await database.fetch_all(query)
 
     content = [
-            {"star name: ": result} for result in results
-        ]
+            {
+                "index": result["id"], "star_name": result["star_name"]
+            } 
+            for result in results
+    ]
     return content
 
