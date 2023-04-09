@@ -17,14 +17,6 @@ async def lifespan(app):
     yield
     await database.disconnect()
 
-async def init_db():
-    async with Database(DATABASE_URL) as database:
-        with open(SCRIPT, 'r') as file:
-            for line in file:
-                if line:
-                    await database.execute(line)
-            await database.disconnect()
-
 async def list_stars():
     query = ('select * from stars;')
     database = await connect_database()
@@ -37,4 +29,9 @@ async def list_stars():
             for result in results
     ]
     return content
+
+async def push_star(**kw):
+    async with Database(DATABASE_URL) as database:
+        query = "insert into stars(star_name) values ('{}');".format(kw['star_name'])
+        await database.execute(query)
 
