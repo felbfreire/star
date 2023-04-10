@@ -44,6 +44,7 @@ class TestCli():
             assert response.content == b'Hello Alfred'
 
     def test_send_star(self):
+        drop_table()
         create_table()
         with Client(base_url=url) as client:
             client.post('/api/throw/Deathstar')
