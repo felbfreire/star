@@ -5,21 +5,21 @@ from databases import Database
 from config import DATABASE_URL, SCRIPT
 
 
-async def connect_database():
+async def create_database():
     database = Database(DATABASE_URL)
     await database.connect()
     return database
 
 @asynccontextmanager
 async def lifespan(app):
-    database = await connect_database()
+    database = await create_database()
     await database.connect()
     yield
     await database.disconnect()
 
 async def list_stars():
     query = ('select * from stars;')
-    database = await connect_database()
+    database = await create_database()
     results = await database.fetch_all(query)
 
     content = [
