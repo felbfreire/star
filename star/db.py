@@ -32,6 +32,7 @@ async def list_stars():
 
 async def push_star(**kw):
     async with Database(DATABASE_URL) as database:
-        query = "insert into stars(star_name) values ('{}');".format(kw['star_name'])
-        await database.execute(query)
+        star_name = kw['star_name']
+        query = "insert into stars(star_name) values ('%s');"
+        await database.execute((query % (star_name)))
 
