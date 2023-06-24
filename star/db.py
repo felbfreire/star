@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from databases import Database
 
 from config import DATABASE_URL, SCRIPT
+from models import metadata, stars
 
 
 async def create_database():
@@ -18,7 +19,7 @@ async def lifespan(app):
     await database.disconnect()
 
 async def list_stars():
-    query = ('select * from stars;')
+    query = stars.select()
     database = await create_database()
     results = await database.fetch_all(query)
 
@@ -33,6 +34,8 @@ async def list_stars():
 async def push_star(**kw):
     async with Database(DATABASE_URL) as database:
         star_name = kw['star_name']
-        query = "insert into stars(star_name) values ('%s');"
-        await database.execute((query % (star_name)))
+        query = stars.insert().values(
+                star_name=star_name
+                )
+        await database.execute((query))
 
